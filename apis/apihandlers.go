@@ -314,6 +314,10 @@ func GetOneStateObjectForId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+	if resourceOwner == nil {
+		RespondErrorForApiCall(w, SRNotFound, "")
+		return
+	}
 	if resourceOwner.IsConnectedToServer() == false {
 		errString := "Confd not connected to " + resourceOwner.GetServerName()
 		RespondErrorForApiCall(w, SRSystemNotReady, errString)
@@ -375,6 +379,10 @@ func GetOneStateObject(w http.ResponseWriter, r *http.Request) {
 	//Get key fields provided in the request.
 	objKey = gApiMgr.dbHdl.GetKey(obj)
 	resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+	if resourceOwner == nil {
+		RespondErrorForApiCall(w, SRNotFound, "")
+		return
+	}
 	if resourceOwner.IsConnectedToServer() == false {
 		errString := "Confd not connected to " + resourceOwner.GetServerName()
 		RespondErrorForApiCall(w, SRSystemNotReady, errString)
@@ -483,6 +491,10 @@ func BulkGetStateObjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+	if resourceOwner == nil {
+		RespondErrorForApiCall(w, SRNotFound, "")
+		return
+	}
 	if resourceOwner.IsConnectedToServer() == false {
 		errString := "Confd not connected to " + resourceOwner.GetServerName()
 		RespondErrorForApiCall(w, SRSystemNotReady, errString)
@@ -555,6 +567,10 @@ func ExecuteActionObject(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("actionObjhdl:", actionobjHdl)
 		if body, actionobj, err = actions.GetActionObj(r, actionobjHdl); err == nil {
 			resourceOwner := gApiMgr.actionMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
 				errCode = SRSystemNotReady
@@ -644,6 +660,10 @@ func ConfigObjectCreate(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errCode = SRSystemNotReady
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
@@ -732,6 +752,10 @@ func ConfigObjectDeleteForId(w http.ResponseWriter, r *http.Request) {
 		if body, obj, err = objects.GetConfigObjFromJsonData(nil, objHdl); err == nil {
 			dbObj, _ := gApiMgr.dbHdl.GetObjectFromDb(obj, objKey)
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
 				errCode = SRSystemNotReady
@@ -820,6 +844,10 @@ func ConfigObjectDelete(w http.ResponseWriter, r *http.Request) {
 			uuid, err = gApiMgr.dbHdl.GetUUIDFromObjKey(objKey)
 			resp.UUId = uuid
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
 				errCode = SRSystemNotReady
@@ -945,6 +973,10 @@ func ConfigObjectUpdateForId(w http.ResponseWriter, r *http.Request) {
 					patchOpInfoSlice = append(patchOpInfoSlice, patchOpInfo)
 				}
 				resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+				if resourceOwner == nil {
+					RespondErrorForApiCall(w, SRNotFound, "")
+					return
+				}
 				if resourceOwner.IsConnectedToServer() == false {
 					errString := "Confd not connected to " + resourceOwner.GetServerName()
 					errCode = SRSystemNotReady
@@ -1003,6 +1035,10 @@ func ConfigObjectUpdateForId(w http.ResponseWriter, r *http.Request) {
 			mergedObjKey := gApiMgr.dbHdl.GetKey(mergedObj)
 			if objKey == mergedObjKey {
 				resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+				if resourceOwner == nil {
+					RespondErrorForApiCall(w, SRNotFound, "")
+					return
+				}
 				if resourceOwner.IsConnectedToServer() == false {
 					errString := "Confd not connected to " + resourceOwner.GetServerName()
 					errCode = SRSystemNotReady
@@ -1144,6 +1180,10 @@ func ConfigObjectUpdate(w http.ResponseWriter, r *http.Request) {
 				patchOpInfoSlice = append(patchOpInfoSlice, patchOpInfo)
 			}
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
 				errCode = SRSystemNotReady
@@ -1203,6 +1243,10 @@ func ConfigObjectUpdate(w http.ResponseWriter, r *http.Request) {
 		mergedObjKey := mergedObj.GetKey()
 		if objKey == mergedObjKey {
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
+			if resourceOwner == nil {
+				RespondErrorForApiCall(w, SRNotFound, "")
+				return
+			}
 			if resourceOwner.IsConnectedToServer() == false {
 				errString := "Confd not connected to " + resourceOwner.GetServerName()
 				errCode = SRSystemNotReady
