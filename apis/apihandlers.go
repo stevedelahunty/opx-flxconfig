@@ -568,7 +568,10 @@ func ExecuteActionObject(w http.ResponseWriter, r *http.Request) {
 		if body, actionobj, err = actions.GetActionObj(r, actionobjHdl); err == nil {
 			resourceOwner := gApiMgr.actionMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "POST", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
@@ -661,7 +664,10 @@ func ConfigObjectCreate(w http.ResponseWriter, r *http.Request) {
 			}
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "POST", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
@@ -753,7 +759,10 @@ func ConfigObjectDeleteForId(w http.ResponseWriter, r *http.Request) {
 			dbObj, _ := gApiMgr.dbHdl.GetObjectFromDb(obj, objKey)
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "DELETE", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
@@ -845,7 +854,10 @@ func ConfigObjectDelete(w http.ResponseWriter, r *http.Request) {
 			resp.UUId = uuid
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "DELETE", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
@@ -974,7 +986,10 @@ func ConfigObjectUpdateForId(w http.ResponseWriter, r *http.Request) {
 				}
 				resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 				if resourceOwner == nil {
-					RespondErrorForApiCall(w, SRNotFound, "")
+					errString := "Invalid client handle"
+					errCode = SRNotFound
+					RespondErrorForApiCall(w, errCode, errString)
+					gApiMgr.StoreApiCallInfo(r, resource, "UPDATE", body, errCode, errString)
 					return
 				}
 				if resourceOwner.IsConnectedToServer() == false {
@@ -1036,7 +1051,10 @@ func ConfigObjectUpdateForId(w http.ResponseWriter, r *http.Request) {
 			if objKey == mergedObjKey {
 				resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 				if resourceOwner == nil {
-					RespondErrorForApiCall(w, SRNotFound, "")
+					errString := "Invalid client handle"
+					errCode = SRNotFound
+					RespondErrorForApiCall(w, errCode, errString)
+					gApiMgr.StoreApiCallInfo(r, resource, "UPDATE", body, errCode, errString)
 					return
 				}
 				if resourceOwner.IsConnectedToServer() == false {
@@ -1181,7 +1199,10 @@ func ConfigObjectUpdate(w http.ResponseWriter, r *http.Request) {
 			}
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "UPDATE", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
@@ -1244,7 +1265,10 @@ func ConfigObjectUpdate(w http.ResponseWriter, r *http.Request) {
 		if objKey == mergedObjKey {
 			resourceOwner := gApiMgr.objectMgr.ObjHdlMap[resource].Owner
 			if resourceOwner == nil {
-				RespondErrorForApiCall(w, SRNotFound, "")
+				errString := "Invalid client handle"
+				errCode = SRNotFound
+				RespondErrorForApiCall(w, errCode, errString)
+				gApiMgr.StoreApiCallInfo(r, resource, "UPDATE", body, errCode, errString)
 				return
 			}
 			if resourceOwner.IsConnectedToServer() == false {
