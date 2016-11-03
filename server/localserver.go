@@ -197,10 +197,15 @@ func GetSystemStatus() modelObjs.SystemStatusState {
 	systemStatus.Name, _ = os.Hostname()
 	systemStatus.Ready = gConfigMgr.clientMgr.IsReady()
 	if systemStatus.Ready == false {
-		reason := "Not connected to"
 		unconnectedClients := gConfigMgr.clientMgr.GetUnconnectedClients()
-		for idx := 0; idx < len(unconnectedClients); idx++ {
-			reason = reason + " " + unconnectedClients[idx]
+		reason := ""
+		if len(unconnectedClients) > 0 {
+			reason = "Not connected to"
+			for idx := 0; idx < len(unconnectedClients); idx++ {
+				reason = reason + " " + unconnectedClients[idx]
+			}
+		} else {
+			reason = "Initializing"
 		}
 		systemStatus.Reason = reason
 	} else {
