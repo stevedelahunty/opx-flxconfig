@@ -417,11 +417,16 @@ func BulkGetConfigObjects(w http.ResponseWriter, r *http.Request) {
 	resource := strings.TrimPrefix(urlStr, gApiMgr.apiBaseConfig)
 	resource = strings.ToLower(resource)
 	resource = strings.Split(resource, "?")[0]
+	if !strings.HasSuffix(resource, "s") {
+		RespondErrorForApiCall(w, SRNotFound, "")
+		return
+	}
 	resource = resource[:len(resource)-1]
 	resource = strings.ToLower(resource)
 	objHdl, ok := modelObjs.ConfigObjectMap[resource]
 	if !ok {
 		RespondErrorForApiCall(w, SRNotFound, "")
+		return
 	}
 	_, obj, err := objects.GetConfigObjFromJsonData(nil, objHdl)
 	if err != nil {
@@ -473,11 +478,16 @@ func BulkGetStateObjects(w http.ResponseWriter, r *http.Request) {
 	urlStr := ReplaceMultipleSeperatorInUrl(r.URL.String())
 	resource := strings.TrimPrefix(urlStr, gApiMgr.apiBaseState)
 	resource = strings.Split(resource, "?")[0]
+	if !strings.HasSuffix(resource, "s") {
+		RespondErrorForApiCall(w, SRNotFound, "")
+		return
+	}
 	resource = resource[:len(resource)-1]
 	resource = strings.ToLower(resource) + "state"
 	objHdl, ok := modelObjs.ConfigObjectMap[resource]
 	if !ok {
 		RespondErrorForApiCall(w, SRNotFound, "")
+		return
 	}
 	_, obj, err := objects.GetConfigObjFromJsonData(nil, objHdl)
 	if err != nil {
