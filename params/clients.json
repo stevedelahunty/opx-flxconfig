@@ -14,7 +14,7 @@
 	{"Name":"lacpd",
 	 "Port":10004},
 
-	{"Name":"ospfd",
+	{"Name":"ospfv2d",
 	 "Port":10005},
 	
 	{"Name":"stpd",
