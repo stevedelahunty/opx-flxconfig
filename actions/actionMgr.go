@@ -35,6 +35,7 @@ import (
 	modelObjs "models/objects"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
 	"utils/logging"
 )
@@ -410,8 +411,12 @@ func DeleteConfig(resource string) {
 }
 
 func ApplyConfigObject(data modelActions.ApplyConfig) {
+	ApplyConfig(data.ConfigData)
+}
+
+func ApplyConfig(configData map[string][]json.RawMessage) {
 	for _, applyResource := range gActionMgr.applyConfigOrder {
-		for key, value := range data.ConfigData {
+		for key, value := range configData {
 			if applyResource != key {
 				continue
 			}
@@ -426,9 +431,13 @@ func ApplyConfigObject(data modelActions.ApplyConfig) {
 }
 
 func ForceApplyConfigObject(data modelActions.ForceApplyConfig) {
+	ForceApplyConfig(data.ConfigData)
+}
+
+func ForceApplyConfig(configData map[string][]json.RawMessage) {
 	appliedConfigs := make(map[string]bool)
 	for _, applyResource := range gActionMgr.applyConfigOrder {
-		for key, value := range data.ConfigData {
+		for key, value := range configData {
 			if applyResource != key {
 				continue
 			}
@@ -519,6 +528,65 @@ func OpenConfigFile(cfgFileName string) (fo *os.File, err error) {
 	return fo, err
 }
 
+func ReadConfigFromFile(fileName string) (map[string][]json.RawMessage, error) {
+	gActionMgr.logger.Debug("Reading config file, FileName:", fileName)
+	if fileName == "" {
+		gActionMgr.logger.Debug("FileName not set, setting it to default startup-config")
+		fileName = gActionMgr.paramsDir + "../" + "startup-config.json"
+	} else {
+		if !strings.HasPrefix(fileName, "/") {
+			fileName = gActionMgr.paramsDir + "../" + fileName
+		}
+	}
+	if !strings.HasSuffix(fileName, ".json") {
+		fileName = fileName + ".json"
+	}
+	if _, err := os.Stat(fileName); err != nil {
+		errMsg := fmt.Sprintf("Could not find the file", fileName)
+		gActionMgr.logger.Err(errMsg, "Reason:", err)
+		return nil, errors.New(errMsg)
+	}
+	bytes, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		errMsg := fmt.Sprintf("Error in reading configuration file", fileName)
+		gActionMgr.logger.Err(errMsg, "Reason:", err)
+		return nil, errors.New(errMsg)
+	}
+	configFileMap := make(map[string]interface{})
+	err = json.Unmarshal(bytes, &configFileMap)
+	if err != nil {
+		errMsg := fmt.Sprintf("Error in unmarshaling json from config file", fileName)
+		gActionMgr.logger.Err(errMsg, "Reason:", err)
+		return nil, errors.New(errMsg)
+	}
+	configData := make(map[string][]json.RawMessage)
+	if val, ok := configFileMap["ConfigData"]; ok {
+		if reflect.TypeOf(val).String() != "map[string]interface {}" {
+			errMsg := fmt.Sprintf("Unsupported json type")
+			gActionMgr.logger.Err(errMsg)
+			return nil, errors.New(errMsg)
+		}
+		for actionObjName, objConfigs := range val.(map[string]interface{}) {
+			objConfigsRaw := make([]json.RawMessage, 0)
+			for _, objConfig := range objConfigs.([]interface{}) {
+				objConfigRaw, err := json.Marshal(objConfig)
+				if err != nil {
+					errMsg := fmt.Sprintf("Config file error", fileName)
+					gActionMgr.logger.Err(errMsg, "Reason:", err)
+					return nil, errors.New(errMsg)
+				}
+				objConfigsRaw = append(objConfigsRaw, objConfigRaw)
+			}
+			configData[actionObjName] = objConfigsRaw
+		}
+	} else {
+		errMsg := fmt.Sprintf("No key ConfigData in the config file")
+		gActionMgr.logger.Err(errMsg)
+		return nil, errors.New(errMsg)
+	}
+	return configData, nil
+}
+
 func ExecuteConfigurationAction(obj modelActions.ActionObj) (err error) {
 	gActionMgr.logger.Debug("local client Execute action obj: ", obj)
 	if gActionMgr == nil {
@@ -530,10 +598,26 @@ func ExecuteConfigurationAction(obj modelActions.ActionObj) (err error) {
 		gActionMgr.logger.Debug("ApplyConfig")
 		data := obj.(modelActions.ApplyConfig)
 		ApplyConfigObject(data)
+	case modelActions.ApplyConfigByFile:
+		gActionMgr.logger.Debug("ApplyConfigByFile")
+		data := obj.(modelActions.ApplyConfigByFile)
+		configData, err := ReadConfigFromFile(data.FileName)
+		if err != nil {
+			return err
+		}
+		ApplyConfig(configData)
 	case modelActions.ForceApplyConfig:
 		gActionMgr.logger.Debug("ForceApplyConfig")
 		data := obj.(modelActions.ForceApplyConfig)
 		ForceApplyConfigObject(data)
+	case modelActions.ForceApplyConfigByFile:
+		gActionMgr.logger.Debug("ForceApplyConfigByFile")
+		data := obj.(modelActions.ForceApplyConfigByFile)
+		configData, err := ReadConfigFromFile(data.FileName)
+		if err != nil {
+			return err
+		}
+		ForceApplyConfig(configData)
 	case modelActions.SaveConfig:
 		gActionMgr.logger.Debug("SaveConfig")
 		var fo *os.File

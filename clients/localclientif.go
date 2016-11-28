@@ -198,7 +198,9 @@ func (clnt *LocalClient) ExecuteAction(obj actions.ActionObj) error {
 	defer clnt.UnlockApiHandler()
 	clnt.LockApiHandler()
 	switch obj.(type) {
-	case actions.SaveConfig, actions.ApplyConfig, actions.ForceApplyConfig, actions.ResetConfig:
+	case actions.SaveConfig, actions.ApplyConfig, actions.ApplyConfigByFile, actions.ForceApplyConfig,
+		actions.ForceApplyConfigByFile, actions.ResetConfig:
+
 		err := gClientMgr.executeConfigurationActionCB(obj)
 		return err
 	default:
