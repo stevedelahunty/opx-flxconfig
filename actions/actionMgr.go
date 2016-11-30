@@ -372,20 +372,8 @@ func DeleteConfig(resource string) {
 			for _, obj := range objs {
 				objKey := obj.GetKey()
 				gActionMgr.logger.Debug("Obj ", obj, " key ", objKey)
-				if !objMap.AutoCreate && !objMap.AutoDiscover {
-					err, success := objMap.Owner.DeleteObject(obj, objKey, gActionMgr.dbHdl.DBUtil)
-					if err == nil && success == true {
-						gActionMgr.logger.Debug("Delete UUID to objectKeyMap")
-						uuid, er := gActionMgr.dbHdl.GetUUIDFromObjKey(objKey)
-						if er == nil {
-							err = gActionMgr.dbHdl.DeleteUUIDToObjKeyMap(uuid, objKey)
-							if err != nil {
-								gActionMgr.logger.Err("Failed to delete uuid map ", uuid)
-							}
-						}
-					}
-				} else {
-					defaultObjKey := objKey + "Default"
+				if objMap.AutoCreate || objMap.AutoDiscover {
+					defaultObjKey := "Default#" + objKey
 					defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(obj, defaultObjKey)
 					if err == nil {
 						gActionMgr.logger.Debug("DeleteConfig: update to default - ", resource)
@@ -401,6 +389,18 @@ func DeleteConfig(resource string) {
 							err, success := objMap.Owner.UpdateObject(obj, defaultObj, diff, nil, objKey, gActionMgr.dbHdl.DBUtil)
 							if success == false {
 								gActionMgr.logger.Err("DeleteConfig: failed to update to default " + objKey + " Error: " + err.Error())
+							}
+						}
+					}
+				} else {
+					err, success := objMap.Owner.DeleteObject(obj, objKey, gActionMgr.dbHdl.DBUtil)
+					if err == nil && success == true {
+						gActionMgr.logger.Debug("Delete UUID to objectKeyMap")
+						uuid, er := gActionMgr.dbHdl.GetUUIDFromObjKey(objKey)
+						if er == nil {
+							err = gActionMgr.dbHdl.DeleteUUIDToObjKeyMap(uuid, objKey)
+							if err != nil {
+								gActionMgr.logger.Err("Failed to delete uuid map ", uuid)
 							}
 						}
 					}
@@ -483,11 +483,42 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		gActionMgr.logger.Debug("No objects of type:", resource, " configured")
 		return nil
 	}
-	if data.ConfigData[resource] == nil {
-		data.ConfigData[resource] = make([]interface{}, 0)
+	checkDefault := false
+	objMap, ok := gActionMgr.objectMgr.ObjHdlMap[strings.ToLower(resource)]
+	if !ok {
+		gActionMgr.logger.Err("Object ", resource, " doesnt exist in ObjHdlMap")
+		return errors.New("ObjMap not found")
+	}
+	if objMap.AutoCreate || objMap.AutoDiscover {
+		checkDefault = true
 	}
 	for _, configObject := range configObjects {
-		data.ConfigData[resource] = append(data.ConfigData[resource], configObject)
+		anyUpdated := false
+		if checkDefault {
+			objKey := configObject.GetKey()
+			defaultObjKey := "Default#" + objKey
+			defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(configObject, defaultObjKey)
+			if err == nil {
+				diff, _ := gActionMgr.dbHdl.CompareObjectDefaultAndDiff(configObject, defaultObj)
+				for _, updated := range diff {
+					if updated == true {
+						anyUpdated = true
+						break
+					}
+				}
+				if anyUpdated == false {
+					continue
+				}
+			}
+		} else {
+			anyUpdated = true
+		}
+		if anyUpdated == true {
+			if data.ConfigData[resource] == nil {
+				data.ConfigData[resource] = make([]interface{}, 0)
+			}
+			data.ConfigData[resource] = append(data.ConfigData[resource], configObject)
+		}
 	}
 	return nil
 
