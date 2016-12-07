@@ -221,6 +221,53 @@ func GetActionObj(r *http.Request, obj modelActions.ActionObj) (body []byte, ret
 	return body, retobj, err
 }
 
+func SaveConfig(data modelActions.SaveConfig) error {
+	var fo *os.File
+	var err error
+	fileName := data.FileName
+	gActionMgr.logger.Debug("FileName:", fileName)
+	if fileName == "" {
+		gActionMgr.logger.Debug("FileName not set, setting it to default startup-config")
+		fileName = gActionMgr.paramsDir + "../" + "startup-config.json"
+	} else {
+		if !strings.HasPrefix(fileName, "/") {
+			fileName = gActionMgr.paramsDir + "../" + fileName
+		}
+	}
+	if !strings.HasSuffix(fileName, ".json") {
+		fileName = fileName + ".json"
+	}
+	// open config file
+	fo, err = OpenConfigFile(fileName)
+	if err != nil {
+		gActionMgr.logger.Err("error with opening file to save config " + fileName + " err: " + err.Error())
+		return err
+	}
+	// close fo on exit and check for its returned error
+	defer func() {
+		if err := fo.Close(); err != nil {
+			panic(err)
+		}
+	}()
+	var wdata modelActions.SaveConfigObj
+	wdata.ConfigData = make(map[string][]interface{})
+	for _, applyResource := range gActionMgr.applyConfigOrder {
+		SaveConfigObject(wdata, applyResource)
+	}
+	js, err := json.MarshalIndent(wdata, "", "    ")
+	if err != nil {
+		gActionMgr.logger.Err("json marshal returned error: " + err.Error())
+		return err
+	}
+	gActionMgr.logger.Debug("js:", string(js))
+	_, err = fo.Write(js)
+	if err != nil {
+		gActionMgr.logger.Err("Error writing: " + err.Error())
+		return err
+	}
+	return nil
+}
+
 func CreateConfig(resource string, body json.RawMessage) {
 	var errCode int
 	var success bool
@@ -344,6 +391,57 @@ func UpdateConfig(resource string, body json.RawMessage) {
 	}
 }
 
+func DeleteOneConfig(resource string, obj modelObjs.ConfigObj) {
+	objMap, ok := gActionMgr.objectMgr.ObjHdlMap[strings.ToLower(resource)]
+	if !ok {
+		gActionMgr.logger.Debug("DeleteOneConfig - Object ", resource, " doesnt exist in ObjHdlMap")
+		return
+	}
+	if objMap.Owner == nil {
+		gActionMgr.logger.Debug("DeleteOneConfig - Owner for:", resource, "is nil")
+		return
+	}
+	if objMap.Owner.IsConnectedToServer() == false {
+		gActionMgr.logger.Err("DeleteOneConfig -  Not connected to daemon " + resource)
+		return
+	}
+	objKey := obj.GetKey()
+	gActionMgr.logger.Debug("Obj ", obj, " key ", objKey)
+	if objMap.AutoCreate || objMap.AutoDiscover {
+		defaultObjKey := "Default#" + objKey
+		defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(obj, defaultObjKey)
+		if err == nil {
+			gActionMgr.logger.Debug("DeleteConfig: update to default - ", resource)
+			diff, _ := gActionMgr.dbHdl.CompareObjectDefaultAndDiff(obj, defaultObj)
+			anyUpdated := false
+			for _, updated := range diff {
+				if updated == true {
+					anyUpdated = true
+					break
+				}
+			}
+			if anyUpdated == true {
+				err, success := objMap.Owner.UpdateObject(obj, defaultObj, diff, nil, objKey, gActionMgr.dbHdl.DBUtil)
+				if success == false {
+					gActionMgr.logger.Err("DeleteConfig: failed to update to default " + objKey + " Error: " + err.Error())
+				}
+			}
+		}
+	} else {
+		err, success := objMap.Owner.DeleteObject(obj, objKey, gActionMgr.dbHdl.DBUtil)
+		if err == nil && success == true {
+			gActionMgr.logger.Debug("Delete UUID to objectKeyMap")
+			uuid, er := gActionMgr.dbHdl.GetUUIDFromObjKey(objKey)
+			if er == nil {
+				err = gActionMgr.dbHdl.DeleteUUIDToObjKeyMap(uuid, objKey)
+				if err != nil {
+					gActionMgr.logger.Err("Failed to delete uuid map ", uuid)
+				}
+			}
+		}
+	}
+}
+
 func DeleteConfig(resource string) {
 	objMap, ok := gActionMgr.objectMgr.ObjHdlMap[strings.ToLower(resource)]
 	if !ok {
@@ -362,49 +460,14 @@ func DeleteConfig(resource string) {
 		gActionMgr.logger.Debug("Get db objects for  ", resource)
 		if objHdl, ok := modelObjs.ConfigObjectMap[strings.ToLower(resource)]; ok {
 			_, obj, _ := objects.GetConfigObjFromJsonData(nil, objHdl)
-			currentIndex := int64(0)
-			objCount := int64(1024)
-			err, _, _, _, objs := gActionMgr.dbHdl.GetBulkObjFromDb(obj, currentIndex, objCount)
+			objs, err := gActionMgr.dbHdl.GetAllObjFromDb(obj)
 			if err != nil {
-				gActionMgr.logger.Debug("Failed to do getBulk object ", objMap.Owner)
+				gActionMgr.logger.Debug("Failed to do getAll object ", objMap.Owner)
 			}
 			gActionMgr.logger.Debug("No of objects collected ", len(objs))
 			for _, obj := range objs {
-				objKey := obj.GetKey()
-				gActionMgr.logger.Debug("Obj ", obj, " key ", objKey)
-				if objMap.AutoCreate || objMap.AutoDiscover {
-					defaultObjKey := "Default#" + objKey
-					defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(obj, defaultObjKey)
-					if err == nil {
-						gActionMgr.logger.Debug("DeleteConfig: update to default - ", resource)
-						diff, _ := gActionMgr.dbHdl.CompareObjectDefaultAndDiff(obj, defaultObj)
-						anyUpdated := false
-						for _, updated := range diff {
-							if updated == true {
-								anyUpdated = true
-								break
-							}
-						}
-						if anyUpdated == true {
-							err, success := objMap.Owner.UpdateObject(obj, defaultObj, diff, nil, objKey, gActionMgr.dbHdl.DBUtil)
-							if success == false {
-								gActionMgr.logger.Err("DeleteConfig: failed to update to default " + objKey + " Error: " + err.Error())
-							}
-						}
-					}
-				} else {
-					err, success := objMap.Owner.DeleteObject(obj, objKey, gActionMgr.dbHdl.DBUtil)
-					if err == nil && success == true {
-						gActionMgr.logger.Debug("Delete UUID to objectKeyMap")
-						uuid, er := gActionMgr.dbHdl.GetUUIDFromObjKey(objKey)
-						if er == nil {
-							err = gActionMgr.dbHdl.DeleteUUIDToObjKeyMap(uuid, objKey)
-							if err != nil {
-								gActionMgr.logger.Err("Failed to delete uuid map ", uuid)
-							}
-						}
-					}
-				}
+				gActionMgr.logger.Debug("DeleteConfig - deleting", obj.GetKey())
+				DeleteOneConfig(resource, obj)
 			}
 		}
 	}
@@ -441,11 +504,39 @@ func ForceApplyConfig(configData map[string][]json.RawMessage) {
 			if applyResource != key {
 				continue
 			}
+			objHdl, ok := modelObjs.ConfigObjectMap[strings.ToLower(applyResource)]
+			if !ok {
+				gActionMgr.logger.Err("ForceApplyConfig - objHdl nil for", applyResource)
+				return
+			}
+			_, obj, _ := objects.GetConfigObjFromJsonData(nil, objHdl)
+			dbObjects, err := gActionMgr.dbHdl.GetAllObjFromDb(obj)
+			if err != nil {
+				gActionMgr.logger.Err("ForceApplyConfig - GetAllObjFromDB for", applyResource, "failed", err)
+				return
+			}
+			needDelete := false
+			if len(dbObjects) > 0 {
+				needDelete = true
+			}
 			appliedConfigs[applyResource] = true
-			gActionMgr.logger.Debug("ApplyConfig for:", key, "value:", value, " resoure:", applyResource)
+			gActionMgr.logger.Debug("ForceApplyConfig for:", key, "value:", value, " resoure:", applyResource)
+			appliedConfigObjs := make(map[string]bool)
 			for _, v := range value {
 				if _, err := json.Marshal(v); err == nil {
+					if obj, err = objHdl.UnmarshalObject(v); err == nil {
+						appliedConfigObjs[obj.GetKey()] = true
+					}
 					CreateConfig(key, v)
+				}
+			}
+			if needDelete {
+				for _, dbObj := range dbObjects {
+					objKey := dbObj.GetKey()
+					if appliedConfigObjs[objKey] != true {
+						gActionMgr.logger.Debug("ForceApplyConfig deleting", objKey)
+						DeleteOneConfig(applyResource, dbObj)
+					}
 				}
 			}
 		}
@@ -471,15 +562,12 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		gActionMgr.logger.Err("GetConfigObj return err: " + err.Error())
 		return errors.New("getConfigObj return err")
 	}
-	var configObjects []modelObjs.ConfigObj
-	currentIndex := int64(0)
-	objCount := int64(1024)
-	err, objCount, _, _, configObjects = gActionMgr.dbHdl.GetBulkObjFromDb(obj, currentIndex, objCount)
+	configObjects, err := gActionMgr.dbHdl.GetAllObjFromDb(obj)
 	if err != nil {
-		gActionMgr.logger.Err("GetBulkObjFromDB returned error:" + err.Error())
-		return errors.New("GetBulkObjFromDb returned error")
+		gActionMgr.logger.Err("GetAllObjFromDB returned error:" + err.Error())
+		return errors.New("GetAllObjFromDb returned error")
 	}
-	if objCount == 0 {
+	if len(configObjects)== 0 {
 		gActionMgr.logger.Debug("No objects of type:", resource, " configured")
 		return nil
 	}
@@ -651,51 +739,11 @@ func ExecuteConfigurationAction(obj modelActions.ActionObj) (err error) {
 		ForceApplyConfig(configData)
 	case modelActions.SaveConfig:
 		gActionMgr.logger.Debug("SaveConfig")
-		var fo *os.File
-		var err error
 		data := obj.(modelActions.SaveConfig)
-		fileName := data.FileName
-		gActionMgr.logger.Debug("FileName:", fileName)
-		if fileName == "" {
-			gActionMgr.logger.Debug("FileName not set, setting it to default startup-config")
-			fileName = gActionMgr.paramsDir + "../" + "startup-config.json"
-		} else {
-			if !strings.HasPrefix(fileName, "/") {
-				fileName = gActionMgr.paramsDir + "../" + fileName
-			}
-		}
-		if !strings.HasSuffix(fileName, ".json") {
-			fileName = fileName + ".json"
-		}
-		// open config file
-		fo, err = OpenConfigFile(fileName)
+		err := SaveConfig(data)
 		if err != nil {
-			gActionMgr.logger.Err("error with opening file to save config " + fileName + " err: " + err.Error())
 			return err
 		}
-		// close fo on exit and check for its returned error
-		defer func() {
-			if err := fo.Close(); err != nil {
-				panic(err)
-			}
-		}()
-		var wdata modelActions.SaveConfigObj
-		wdata.ConfigData = make(map[string][]interface{})
-		for _, applyResource := range gActionMgr.applyConfigOrder {
-			SaveConfigObject(wdata, applyResource)
-		}
-		js, err := json.MarshalIndent(wdata, "", "    ")
-		if err != nil {
-			gActionMgr.logger.Err("json marshal returned error: " + err.Error())
-			return err
-		}
-		gActionMgr.logger.Debug("js:", string(js))
-		_, err = fo.Write(js)
-		if err != nil {
-			gActionMgr.logger.Err("Error writing: " + err.Error())
-			return err
-		}
-
 	case modelActions.ResetConfig:
 		gActionMgr.logger.Debug("Action resolved as ResetConfig")
 		data := obj.(modelActions.ResetConfig)
