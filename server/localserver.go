@@ -194,7 +194,19 @@ func (mgr *ConfigMgr) ConfigureComponentLoggingLevel(compName string) {
 
 func GetSystemStatus() modelObjs.SystemStatusState {
 	systemStatus := modelObjs.SystemStatusState{}
-	systemStatus.Name, _ = os.Hostname()
+	//Get hostname from DB
+	if objHdl, ok := modelObjs.ConfigObjectMap["systemparam"]; ok {
+		var body []byte // @dummy body for default objects
+		obj, _ := objHdl.UnmarshalObject(body)
+		data := obj.(modelObjs.SystemParam)
+		sysParam, err := gConfigMgr.dbHdl.GetObjectFromDb(data, data.GetKey())
+		if err == nil {
+			sysParamObj := sysParam.(modelObjs.SystemParam)
+			systemStatus.Name = sysParamObj.Hostname
+		} else {
+			systemStatus.Name, _ = os.Hostname()
+		}
+	}
 	systemStatus.Ready = gConfigMgr.clientMgr.IsReady()
 	if systemStatus.Ready == false {
 		unconnectedClients := gConfigMgr.clientMgr.GetUnconnectedClients()
