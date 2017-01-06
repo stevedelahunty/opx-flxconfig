@@ -68,7 +68,7 @@ type DaemonsList struct {
 }
 
 type ClientIf interface {
-	Initialize(name string, address string)
+	Initialize(name string, address string, logger logging.LoggerIntf, paramsDir string)
 	ConnectToServer() bool
 	DisconnectFromServer() bool
 	IsConnectedToServer() bool
@@ -99,7 +99,7 @@ func InitializeClientMgr(paramsDir string, logger *logging.Writer,
 	mgr.executeConfigurationActionCB = executeConfigurationActionCB
 	clientsFile := paramsDir + "/clients.json"
 	sysProfileFile := paramsDir + "/systemProfile.json"
-	if rc := mgr.InitializeClientHandles(clientsFile, sysProfileFile); !rc {
+	if rc := mgr.InitializeClientHandles(clientsFile, sysProfileFile, paramsDir); !rc {
 		logger.Err("Error in initializing client handles")
 		return nil
 	}
@@ -111,7 +111,7 @@ func InitializeClientMgr(paramsDir string, logger *logging.Writer,
 //
 //  This method reads the config file and connects to all the clients in the list
 //
-func (mgr *ClientMgr) InitializeClientHandles(clientsFile, sysProfileFile string) bool {
+func (mgr *ClientMgr) InitializeClientHandles(clientsFile, sysProfileFile, paramsDir string) bool {
 	var clientsList []ClientJson
 	var daemonsList DaemonsList
 
@@ -131,7 +131,7 @@ func (mgr *ClientMgr) InitializeClientHandles(clientsFile, sysProfileFile string
 	for _, client := range clientsList {
 		if ClientInterfaces[client.Name] != nil {
 			mgr.Clients[client.Name] = ClientInterfaces[client.Name]
-			mgr.Clients[client.Name].Initialize(client.Name, "localhost:"+strconv.Itoa(client.Port))
+			mgr.Clients[client.Name].Initialize(client.Name, "localhost:"+strconv.Itoa(client.Port), mgr.logger, paramsDir)
 		}
 	}
 
@@ -288,5 +288,19 @@ func (mgr *ClientMgr) ConnectToClient(name string) error {
 			}
 		}
 	}
+	return nil
+}
+
+type ClientBase struct {
+	Name        string
+	Enabled     bool
+	IsConnected bool
+}
+
+func (clnt *ClientBase) PreUpdateValidation(dbObj, obj objects.ConfigObj, attrSet []bool, dbHdl *dbutils.DBUtil) error {
+	return nil
+}
+
+func (clnt *ClientBase) PostUpdateProcessing(dbObj, obj objects.ConfigObj, attSet []bool, dbHdl *dbutils.DBUtil) error {
 	return nil
 }
