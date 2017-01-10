@@ -1,7 +1,6 @@
 package clients
 
 import (
-	"fmt"
 	"models/objects"
 	"utils/clntUtils/clntIntfs/asicdClntIntfs"
 	"utils/dbutils"
@@ -17,7 +16,7 @@ func (clnt *ASICDClient) PostUpdateProcessing(dbObj, obj objects.ConfigObj, attr
 		if attrSet[BREAKOUT_MODE_ATTR_OFFSET] {
 			objList, err := clnt.ClntPlugin.GetAllPortsWithDirtyCache()
 			if err != nil {
-				fmt.Println("Asicd post processing failed")
+				clnt.Logger.Err("Asicd post processing failed")
 				return err
 			}
 			for _, obj := range objList {
@@ -27,7 +26,7 @@ func (clnt *ASICDClient) PostUpdateProcessing(dbObj, obj objects.ConfigObj, attr
 			}
 		}
 	default:
-		fmt.Println("Post update processing not implemented for this config object")
+		clnt.Logger.Info("Post update processing not implemented for this config object")
 	}
 	return nil
 }

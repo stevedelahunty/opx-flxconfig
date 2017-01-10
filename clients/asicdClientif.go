@@ -24,7 +24,6 @@
 package clients
 
 import (
-	"fmt"
 	"models/actions"
 	"models/objects"
 	"utils/clntUtils/clntIntfs"
@@ -119,11 +118,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -135,11 +134,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -151,11 +150,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -167,11 +166,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -183,11 +182,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -199,11 +198,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -215,11 +214,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -231,11 +230,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -247,11 +246,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -263,11 +262,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -279,11 +278,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -295,11 +294,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -311,11 +310,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -327,11 +326,11 @@ func (clnt *ASICDClient) CreateObject(obj objects.ConfigObj, dbHdl *dbutils.DBUt
 		if err == nil && ok == true {
 			err = dbHdl.StoreObjectInDb(data)
 			if err != nil {
-				fmt.Println("Store object in DB failed:", err)
+				clnt.Logger.Err("Store object in DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Create failed:", err)
+			clnt.Logger.Err("Create failed:", err)
 			return err, false
 		}
 		break
@@ -355,11 +354,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -371,11 +370,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -387,11 +386,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -403,11 +402,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -419,11 +418,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -435,11 +434,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -451,11 +450,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -467,11 +466,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -483,11 +482,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -499,11 +498,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -515,11 +514,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -531,11 +530,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -547,11 +546,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -563,11 +562,11 @@ func (clnt *ASICDClient) DeleteObject(obj objects.ConfigObj, objKey string, dbHd
 		if err == nil && ok == true {
 			err = dbHdl.DeleteObjectFromDb(data)
 			if err != nil {
-				fmt.Println("Delete object from DB failed:", err)
+				clnt.Logger.Err("Delete object from DB failed:", err)
 				return err, false
 			}
 		} else {
-			fmt.Println("Delete failed:", err)
+			clnt.Logger.Err("Delete failed:", err)
 			return err, false
 		}
 		break
@@ -599,7 +598,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -616,7 +615,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -633,7 +632,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -650,7 +649,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -667,7 +666,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -684,7 +683,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -701,7 +700,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -718,7 +717,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -735,7 +734,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -752,7 +751,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -769,7 +768,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -786,7 +785,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -803,7 +802,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
@@ -820,7 +819,7 @@ func (clnt *ASICDClient) UpdateObject(dbObj objects.ConfigObj, obj objects.Confi
 
 			err = dbHdl.UpdateObjectInDb(updatedata, dbObj, attrSet)
 			if err != nil {
-				fmt.Println("Update object in DB failed:", err)
+				clnt.Logger.Err("Update object in DB failed:", err)
 				return err, false
 			}
 		} else {
