@@ -62,8 +62,10 @@
         "VrrpV6Intf",
 	"DhcpGlobalConfig",
 	"DhcpIntfConfig",
-        "DhcpRelayGlobal",
-        "DhcpRelayIntf",
+        "DHCPRelayGlobal",
+        "DHCPRelayIntf",
+        "DHCPv6RelayGlobal",
+        "DHCPv6RelayIntf",
         "VxlanInstance",
         "VxlanVtepInstance"
     ]
