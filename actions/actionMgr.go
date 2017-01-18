@@ -585,8 +585,8 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		if checkDefault {
 			objKey := configObject.GetKey()
 			defaultObjKey := "Default#" + objKey
-			defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(configObject, defaultObjKey)
-			if err == nil {
+			defaultObj, _ := gActionMgr.dbHdl.GetObjectFromDb(configObject, defaultObjKey)
+			if defaultObj != nil {
 				diff, _ := gActionMgr.dbHdl.CompareObjectDefaultAndDiff(configObject, defaultObj)
 				for _, updated := range diff {
 					if updated == true {
@@ -609,7 +609,6 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		}
 	}
 	return nil
-
 }
 
 func ResetConfigObject(data modelActions.ResetConfig) (err error) {
