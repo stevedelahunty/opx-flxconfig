@@ -49,7 +49,7 @@ func (clnt *ASICDClient) Initialize(name string, address string, logger logging.
 	clnt.Name = name
 	clnt.Enabled = true
 	clnt.ParamsDir = paramsDir + "/"
-	clnt.ClntInitParams, err = clntIntfs.NewBaseClntInitParams(name, logger, nil, paramsDir+"/")
+	clnt.ClntInitParams, err = clntIntfs.NewBaseClntInitParams(name, logger, nil, true, paramsDir+"/")
 	if err != nil {
 		logger.Err("Error Initializing base clnt for", name)
 		panic(err)
