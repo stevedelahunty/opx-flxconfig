@@ -628,19 +628,24 @@ func OpenConfigFile(cfgFileName string) (fo *os.File, err error) {
 		gActionMgr.logger.Debug(cfgFileName, " not present, create it")
 		fo, err = os.Create(cfgFileName)
 		if err != nil {
-			gActionMgr.logger.Err("Error :" + err.Error() + " when creating file: " + cfgFileName)
+			gActionMgr.logger.Err("Error :", err, "when creating file", cfgFileName)
 			return fo, err
 		}
 	} else if err == nil {
-		// open cfg file
+		// remove and recreate the cfg file
 		gActionMgr.logger.Debug("cfgFile present, open it for update")
-		fo, err = os.OpenFile(cfgFileName, os.O_RDWR, 0666)
+		err = os.Remove(cfgFileName)
 		if err != nil {
-			gActionMgr.logger.Err("Error:", err, "when opening cfgFile: "+cfgFileName)
+			gActionMgr.logger.Err("Error:", err, "when removing cfgFile", cfgFileName)
+			return fo, err
+		}
+		fo, err = os.Create(cfgFileName)
+		if err != nil {
+			gActionMgr.logger.Err("Error:", err, "when opening cfgFile", cfgFileName)
 			return fo, err
 		}
 	} else {
-		gActionMgr.logger.Err("Error:", err, " when handling the cfgFile: "+cfgFileName)
+		gActionMgr.logger.Err("Error:", err, "when handling the cfgFile", cfgFileName)
 		return fo, err
 	}
 	return fo, err
