@@ -144,7 +144,7 @@ func NewConfigMgr(paramsDir string, logger *logging.Writer) *ConfigMgr {
 	// stores default logging level for that client in DB, if it does not exist.
 	// Autocreate objects and logging objects can only be updated by user.
 	// Also, confd discovers all the discoverable objects from that client and stores in DB.
-	mgr.clientNameCh = make(chan string, 10)
+	mgr.clientNameCh = make(chan string, 32)
 	logger.Info("Initialization Done!")
 
 	mgr.ReadSystemSwVersion()
