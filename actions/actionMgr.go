@@ -571,6 +571,7 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		gActionMgr.logger.Debug("No objects of type:", resource, " configured")
 		return nil
 	}
+	sortedConfigObjects := obj.SortObjList(configObjects)
 	checkDefault := false
 	objMap, ok := gActionMgr.objectMgr.ObjHdlMap[strings.ToLower(resource)]
 	if !ok {
@@ -580,7 +581,7 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 	if objMap.AutoCreate || objMap.AutoDiscover {
 		checkDefault = true
 	}
-	for _, configObject := range configObjects {
+	for _, configObject := range sortedConfigObjects {
 		anyUpdated := false
 		if checkDefault {
 			objKey := configObject.GetKey()
