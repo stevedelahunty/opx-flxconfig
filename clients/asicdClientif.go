@@ -49,7 +49,7 @@ func (clnt *ASICDClient) Initialize(name string, address string, logger logging.
 	clnt.Name = name
 	clnt.Enabled = true
 	clnt.ParamsDir = paramsDir + "/"
-	clnt.ClntInitParams, err = clntIntfs.NewBaseClntInitParams(name, logger, nil, true, paramsDir+"/")
+	clnt.ClntInitParams, err = clntIntfs.NewBaseClntInitParams(name, logger, nil, paramsDir+"/")
 	if err != nil {
 		logger.Err("Error Initializing base clnt for", name)
 		panic(err)
@@ -1379,8 +1379,10 @@ func (clnt *ASICDClient) ExecuteAction(obj actions.ActionObj) error {
 		data := obj.(actions.AsicdClearCounters)
 		_, err := clnt.ClntPlugin.ExecuteActionAsicdClearCounters(&data)
 		return err
-		break
-
+	case actions.FlushMacTableEntry:
+		data := obj.(actions.FlushMacTableEntry)
+		_, err := clnt.ClntPlugin.ExecuteActionFlushMacTableEntry(&data)
+		return err
 	default:
 		break
 	}

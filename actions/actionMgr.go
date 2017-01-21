@@ -571,6 +571,7 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		gActionMgr.logger.Debug("No objects of type:", resource, " configured")
 		return nil
 	}
+	sortedConfigObjects := obj.SortObjList(configObjects)
 	checkDefault := false
 	objMap, ok := gActionMgr.objectMgr.ObjHdlMap[strings.ToLower(resource)]
 	if !ok {
@@ -580,13 +581,13 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 	if objMap.AutoCreate || objMap.AutoDiscover {
 		checkDefault = true
 	}
-	for _, configObject := range configObjects {
+	for _, configObject := range sortedConfigObjects {
 		anyUpdated := false
 		if checkDefault {
 			objKey := configObject.GetKey()
 			defaultObjKey := "Default#" + objKey
-			defaultObj, err := gActionMgr.dbHdl.GetObjectFromDb(configObject, defaultObjKey)
-			if err == nil {
+			defaultObj, _ := gActionMgr.dbHdl.GetObjectFromDb(configObject, defaultObjKey)
+			if defaultObj != nil {
 				diff, _ := gActionMgr.dbHdl.CompareObjectDefaultAndDiff(configObject, defaultObj)
 				for _, updated := range diff {
 					if updated == true {
@@ -609,7 +610,6 @@ func SaveConfigObject(data modelActions.SaveConfigObj, resource string) error {
 		}
 	}
 	return nil
-
 }
 
 func ResetConfigObject(data modelActions.ResetConfig) (err error) {
@@ -629,19 +629,24 @@ func OpenConfigFile(cfgFileName string) (fo *os.File, err error) {
 		gActionMgr.logger.Debug(cfgFileName, " not present, create it")
 		fo, err = os.Create(cfgFileName)
 		if err != nil {
-			gActionMgr.logger.Err("Error :" + err.Error() + " when creating file: " + cfgFileName)
+			gActionMgr.logger.Err("Error :", err, "when creating file", cfgFileName)
 			return fo, err
 		}
 	} else if err == nil {
-		// open cfg file
+		// remove and recreate the cfg file
 		gActionMgr.logger.Debug("cfgFile present, open it for update")
-		fo, err = os.OpenFile(cfgFileName, os.O_RDWR, 0666)
+		err = os.Remove(cfgFileName)
 		if err != nil {
-			gActionMgr.logger.Err("Error:", err, "when opening cfgFile: "+cfgFileName)
+			gActionMgr.logger.Err("Error:", err, "when removing cfgFile", cfgFileName)
+			return fo, err
+		}
+		fo, err = os.Create(cfgFileName)
+		if err != nil {
+			gActionMgr.logger.Err("Error:", err, "when opening cfgFile", cfgFileName)
 			return fo, err
 		}
 	} else {
-		gActionMgr.logger.Err("Error:", err, " when handling the cfgFile: "+cfgFileName)
+		gActionMgr.logger.Err("Error:", err, "when handling the cfgFile", cfgFileName)
 		return fo, err
 	}
 	return fo, err
