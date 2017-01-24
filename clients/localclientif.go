@@ -34,13 +34,14 @@ import (
 	"sync"
 	"utils/dbutils"
 	"utils/ipcutils"
+	"utils/logging"
 )
 
 type LocalClient struct {
 	ipcutils.IPCClientBase
 }
 
-func (clnt *LocalClient) Initialize(name string, address string) {
+func (clnt *LocalClient) Initialize(name string, address string, logger logging.LoggerIntf, paramsDir string) {
 	clnt.Name = name
 	clnt.Address = address
 	clnt.ApiHandlerMutex = sync.RWMutex{}
