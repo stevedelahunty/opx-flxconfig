@@ -28,7 +28,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"utils/keepalive"
+//	"utils/keepalive"
 	"utils/logging"
 )
 
@@ -55,7 +55,7 @@ func main() {
 	restRtr := configMgr.ApiMgr.GetRestRtr()
 
 	// Start keepalive routine
-	go keepalive.InitKeepAlive("confd", paramsDirName)
+//	go keepalive.InitKeepAlive("confd", paramsDirName)
 
 	foundConfPort, confPort := server.GetConfigHandlerPort(paramsDirName)
 	if foundConfPort {
